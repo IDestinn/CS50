@@ -29,21 +29,34 @@ int main(int argc, char* argv[])
     printf("\n");
 
     char vote[32];
+    int flag;
 
     for (int i = 0; i < number; i++)
     {
         for(int j = 1; j < argc; j++)
         {
-            printf("Rank %i: ", j);
-            scanf("%s", vote);
-            
-            for(int k = 0, n = argc - 1; k < n; k++)
+            do
             {
-               if (vote == argv[k])
-               {
-                    voters[k].score += argc - j;
-               }
-            }
+                flag = 0;
+                printf("Rank %i: ", j);
+                scanf("%s", vote);
+                
+                for(int k = 0, n = argc - 1; k < n; k++)
+                {
+                    if (!strcmp(vote,voters[k].votername))
+                    {
+                        voters[k].score += argc - j;
+                        flag = 0;
+                        break;
+                    }
+                    else
+                    {
+                        flag = 1;
+                    }
+                }
+                if (flag == 1)
+                    printf("ОШИБКА! Введите имя кондидата!\n");
+            } while(flag == 1);
         }
         printf("\n");
     }
@@ -59,5 +72,5 @@ int main(int argc, char* argv[])
         }
     }
 
-    printf("Winner is %s! With %d scores\n", winer, winerscore);
+    printf("Winner is %s!\nWith %d scores\n", winer, winerscore);
 }
