@@ -17,7 +17,7 @@ int main(void)
     people[0].numbers = "89124351243";
 
     people[1].names = "Ars";
-    people[1].numbers = "84953242234";
+    people[1].numbers = "89343232433";
 
     for (int i = 0; i < 3; i++)
     {
