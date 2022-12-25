@@ -1,6 +1,4 @@
-/.DS_Store
-*.exe
+*
+!/**/
 !*.*
-Weak1/*.exe
-Weak2/*.exe
-Weak3/*.exe
+*.exe
