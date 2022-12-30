@@ -33,18 +33,13 @@ int main(int argc, char *argv[])
     fread(header, sizeof(uint8_t), HEADER_SIZE, input);
     fwrite(header, sizeof(uint8_t), HEADER_SIZE, output);
 
-    int16_t *buffer;
-    while (0) 
-    {   
-        fread(&buffer, sizeof(int16_t), 1, input);
-
-        if (buffer == NULL)
-        {
-            break;
-        }
-
-        *buffer *= factor;
-        fwrite(&buffer, sizeof(uint8_t), 1, output);
+    int16_t buffer;
+    printf("%p\n", &buffer);
+    while (fread(&buffer, sizeof(int16_t), 1, input))
+    {
+        printf("%d\n", buffer);
+        buffer *= factor;
+        fwrite(&buffer, sizeof(int16_t), 1, output);
     }
 
     fclose(input);
