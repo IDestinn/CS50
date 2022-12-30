@@ -34,10 +34,8 @@ int main(int argc, char *argv[])
     fwrite(header, sizeof(uint8_t), HEADER_SIZE, output);
 
     int16_t buffer;
-    printf("%p\n", &buffer);
     while (fread(&buffer, sizeof(int16_t), 1, input))
     {
-        printf("%d\n", buffer);
         buffer *= factor;
         fwrite(&buffer, sizeof(int16_t), 1, output);
     }
@@ -45,6 +43,6 @@ int main(int argc, char *argv[])
     fclose(input);
     fclose(output);
 
-    printf("Succses!");
+    printf("Succses!\n");
     return 0;
 }
