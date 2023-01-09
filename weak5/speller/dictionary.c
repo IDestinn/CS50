@@ -1,7 +1,10 @@
 // Implements a dictionary's functionality
 
+#include <stdio.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <strings.h>
+#include <stdlib.h>
 
 #include "dictionary.h"
 
@@ -13,38 +16,103 @@ typedef struct node
 }
 node;
 
+char word[LENGTH + 1];
+unsigned int word_num = 0;
+
 // TODO: Choose number of buckets in hash table
-const unsigned int N = 26;
+const unsigned int SIZE = 5000;
 
 // Hash table
-node *table[N];
+node *table[SIZE];
 
 // Returns true if word is in dictionary, else false
 bool check(const char *word)
 {
-    // TODO
-    return false;
+    int *pHash;
+    unsigned int hashnumber = hash(word);
+    if (table[hashnumber] == NULL)
+    {
+        return false;
+    }
+    
+    if (strcasecmp(word, table[hashnumber]) == 0)
+    {
+        return true;
+    }
+
+    pHash = table[hashnumber]->next;
+
+
 }
 
 // Hashes word to a number
 unsigned int hash(const char *word)
 {
-    // TODO: Improve this hash function
-    return toupper(word[0]) - 'A';
+    // Improve this hash function
+    int sum = 0;
+    for (int i = 0; word[i] != '\0'; i++)
+    {   
+        sum += tolower(word[i]);
+    }
+    return sum % SIZE;
 }
 
 // Loads dictionary into memory, returning true if successful, else false
 bool load(const char *dictionary)
 {
-    // TODO
-    return false;
+    FILE *file = fopen(dictionary, "r");
+    if (file == NULL)
+    {
+        printf("Could not open %s.\n", dictionary);
+        return false;
+    }
+
+    unsigned int index;
+     while(fscanf(file, "%s\n", word) != EOF)
+    {
+        node* tnode = malloc(sizeof(node));
+        if (tnode == NULL)
+        {
+            return false;
+        }
+
+        //put the word in the node
+        *tnode->word = malloc(strlen(word) + 1);
+        strcpy(tnode->word, word);
+        
+        //hash the word and get the index
+        index = hash(word);
+
+        if (table[index] == NULL)
+        {  
+            table[index] = tnode;
+            tnode->next = NULL;
+        }
+
+        else
+        {
+            tnode->next = table[index];
+            table[index]->next = tnode;  
+        }
+        word_num++;
+    }
+
+    if (ferror(file))
+    {
+        fclose(file);
+        printf("Error reading %s.\n", word);
+        unload();
+        return false;
+    }
+
+    fclose(file);
+    return true;
 }
 
 // Returns number of words in dictionary if loaded, else 0 if not yet loaded
 unsigned int size(void)
 {
-    // TODO
-    return 0;
+    return word_num;
 }
 
 // Unloads dictionary from memory, returning true if successful, else false
