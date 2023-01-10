@@ -1,0 +1,3 @@
+greeting = input("Greeting: ")
+
+for 
