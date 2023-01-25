@@ -35,22 +35,24 @@ def main():
 
 # TODO: Create a dictionary to store 14 most recent days of new cases by state
 def calculate(reader):
-    end_date = date.today() - timedelta(days=15)
+    end_date = date.today() - timedelta(days=16)
     new_cases = {}
     for row in reader:
         if row['date'] > str(end_date):
             if row['state'] in new_cases:  
-                new_cases[row['state']].append([row['cases']])
+                new_cases[row['state']].append([int(row['cases']) - new_cases[row['state']][0]])
             else:
-                new_cases[row['state']] = []
+                new_cases[row['state']] = [int(row['cases'])]
     return new_cases
             
 
 # TODO: Calculate and print out seven day average for given state
 def comparative_averages(new_cases, states):
-    print(states)
     for i in range(len(states)):
-        print(new_cases.get(states[i]))
+        state_cases = new_cases.get(states[i])
+        state_cases.pop(0)
+        print(state_cases)
+        print(f"{states[i]} had a 7-day average of {avarage} and {status} of {procent}.")
 
 
 main()
