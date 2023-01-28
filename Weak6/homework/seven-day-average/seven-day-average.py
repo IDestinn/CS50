@@ -1,7 +1,6 @@
 import csv
 import requests
 from datetime import date, timedelta
-from statistics import mean
 
 
 def main():
@@ -11,7 +10,8 @@ def main():
     )
     decoded_content = download.content.decode("utf-8")
     file = decoded_content.splitlines()
-    reader = csv.DictReader(file)
+    fieldnames = csv.reader(file).__next__()
+    reader = csv.DictReader(reversed(list(file)), fieldnames=fieldnames)
 
     # Construct 14 day lists of new cases for each states
     new_cases = calculate(reader)
@@ -39,11 +39,14 @@ def calculate(reader):
     end_date = date.today() - timedelta(days=16)
     new_cases = {}
     for row in reader:
-        if row['date'] > str(end_date):
-            if row['state'] in new_cases:  
-                new_cases[row['state']].append(int(row['cases']) - new_cases[row['state']][0])
-            else:
-                new_cases[row['state']] = [int(row['cases'])]
+        if row['date'] < str(end_date):
+            break
+
+        if row['state'] in new_cases:  
+            new_cases[row['state']].append(int(row['cases']))
+        else:
+            new_cases[row['state']] = [int(row['cases'])]
+
     return new_cases
             
 
@@ -51,10 +54,13 @@ def calculate(reader):
 def comparative_averages(new_cases, states):
     for i in range(len(states)):
         state_cases = new_cases.get(states[i])
-        state_cases.pop(0)
+        for y in range(len(state_cases) - 1):
+            state_cases[y] -= state_cases[-1]
+        state_cases.pop(15)
+        state_cases.reverse()
 
-        current_weak_avarage = sum(state_cases[7:14]) / len(state_cases[7:14])
         last_weak_avarage = sum(state_cases[0:7]) / len(state_cases[0:7])
+        current_weak_avarage = (sum(state_cases[7:14]) / len(state_cases[7:14])) - last_weak_avarage
 
         diference = current_weak_avarage / last_weak_avarage * 100
         if (diference > 100):
