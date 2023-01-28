@@ -1,6 +1,7 @@
 import csv
 import requests
 from datetime import date, timedelta
+from statistics import mean
 
 
 def main():
@@ -40,7 +41,7 @@ def calculate(reader):
     for row in reader:
         if row['date'] > str(end_date):
             if row['state'] in new_cases:  
-                new_cases[row['state']].append([int(row['cases']) - new_cases[row['state']][0]])
+                new_cases[row['state']].append(int(row['cases']) - new_cases[row['state']][0])
             else:
                 new_cases[row['state']] = [int(row['cases'])]
     return new_cases
@@ -51,8 +52,22 @@ def comparative_averages(new_cases, states):
     for i in range(len(states)):
         state_cases = new_cases.get(states[i])
         state_cases.pop(0)
-        print(state_cases)
-        print(f"{states[i]} had a 7-day average of {avarage} and {status} of {procent}.")
+
+        current_weak_avarage = sum(state_cases[7:14]) / len(state_cases[7:14])
+        last_weak_avarage = sum(state_cases[0:7]) / len(state_cases[0:7])
+
+        diference = current_weak_avarage / last_weak_avarage * 100
+        if (diference > 100):
+            status = "increase"
+            diference =  last_weak_avarage / current_weak_avarage * 100
+        elif (diference < 100):
+            status =  "decrease"
+        else:
+            print(print(f"{states[i]} had a 7-day average just like last week"))
+            return
+        
+        print(f"{states[i]} had a 7-day average of {round(current_weak_avarage)} and {status} of {round(diference)}%.")
+    print()
 
 
 main()
