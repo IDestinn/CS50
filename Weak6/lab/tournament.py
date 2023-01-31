@@ -1,12 +1,13 @@
 # Simulate a sports tournament
 
 import csv
+import os
 import sys
 import random
 from math import log
 
 # Number of simluations to run
-N = 1000
+N = 1000000
 
 
 def main():
@@ -15,8 +16,14 @@ def main():
     if len(sys.argv) != 2:
         sys.exit("Usage: python tournament.py FILENAME")
 
+    filename = str(sys.argv[1])
+
+    if not os.path.exists(filename):
+        print(f"File {filename} does not exist!")
+        quit(1)
+
     teams = []
-    with open(str(sys.argv[1]), 'r') as file:
+    with open((filename), 'r') as file:
         reader = csv.DictReader(file)
         for row in reader:
             teams.append({"team": row["team"], "rating": int(row["rating"])})
