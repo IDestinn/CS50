@@ -7,7 +7,7 @@ import random
 from math import log
 
 # Number of simluations to run
-N = 1000000
+N = 100000
 
 
 def main():
